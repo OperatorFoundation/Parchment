@@ -382,6 +382,21 @@ public actor ParchmentActor
     {
         return try self.unsafe.get(offset: uint64Offset)
     }
+
+    public func delete(offset uint64Offset: UInt64) throws
+    {
+        return try self.unsafe.delete(offset: uint64Offset)
+    }
+
+    public func delete(offset uint64Offset: UInt64, length: UInt64) throws
+    {
+        return try self.unsafe.delete(offset: uint64Offset, length: length)
+    }
+
+    public func compact() throws
+    {
+        return try self.unsafe.compact()
+    }
 }
 
 // Parchment uses actor-based locking and presents a synchronous API
@@ -465,6 +480,30 @@ public class Parchment
         }
 
         return result
+    }
+
+    public func delete(offset uint64Offset: UInt64) throws
+    {
+        AsyncAwaitThrowingEffectSynchronizer.sync
+        {
+            try await self.actor.delete(offset: uint64Offset)
+        }
+    }
+
+    public func delete(offset uint64Offset: UInt64, length: UInt64) throws
+    {
+        AsyncAwaitThrowingEffectSynchronizer.sync
+        {
+            try await self.actor.delete(offset: uint64Offset, length: length)
+        }
+    }
+
+    public func compact() throws
+    {
+        AsyncAwaitThrowingEffectSynchronizer.sync
+        {
+            try await self.actor.compact()
+        }
     }
 }
 
