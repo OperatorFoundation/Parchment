@@ -1,0 +1,4 @@
+module MmapCDarwin {
+    header "MmapCDarwin.h"
+    export *
+}
