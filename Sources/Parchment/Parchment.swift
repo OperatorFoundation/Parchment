@@ -1,3 +1,5 @@
+// Parchment mmaps a file to a [UInt64]. It can either mmap the whole file or any contiguous subset of the file.
+
 import Foundation
 import SystemPackage
 
@@ -6,6 +8,7 @@ import Datable
 import Gardener
 import Mmap
 
+// ParchmetUnsafe does not lock
 public class ParchmentUnsafe
 {
     static public func getFileSizeOfUrl(_ url: URL) throws -> Int // in bytes
@@ -68,6 +71,11 @@ public class ParchmentUnsafe
         if File.exists(url.path)
         {
             throw ParchmentError.fileExists
+        }
+
+        guard value != UInt64.max else
+        {
+            throw ParchmentError.maxUInt64ValueNotAllowed
         }
 
         let fd = try FileDescriptor.open(url.path, FileDescriptor.AccessMode.readWrite, options: [.create, .append], permissions: [.ownerReadWrite])
@@ -142,6 +150,11 @@ public class ParchmentUnsafe
 
     public func append(_ newElement: UInt64) throws
     {
+        guard newElement != UInt64.max else
+        {
+            throw ParchmentError.maxUInt64ValueNotAllowed
+        }
+
         if let mapped = self.mapped
         {
             guard (mapped.offset + mapped.size) == mapped.fileSize else
@@ -169,6 +182,14 @@ public class ParchmentUnsafe
         let fd = try FileDescriptor.open(self.url.path, FileDescriptor.AccessMode.readWrite, options: [.create, .append], permissions: [.ownerReadWrite])
 
         try fd.seek(offset: 0, from: FileDescriptor.SeekOrigin.end)
+
+        for element in contentsOf
+        {
+            guard element != UInt64.max else
+            {
+                throw ParchmentError.maxUInt64ValueNotAllowed
+            }
+        }
 
         for element in contentsOf
         {
@@ -216,6 +237,14 @@ public class ParchmentUnsafe
 
     public func set(offset uint64Offset: UInt64, to uint64s: [UInt64]) throws
     {
+        for element in uint64s
+        {
+            guard element != UInt64.max else
+            {
+                throw ParchmentError.maxUInt64ValueNotAllowed
+            }
+        }
+
         guard let mapped = self.mapped else
         {
             throw ParchmentError.noMmapFile
@@ -226,6 +255,11 @@ public class ParchmentUnsafe
 
     public func set(offset uint64Offset: UInt64, to uint64: UInt64) throws
     {
+        guard uint64 != UInt64.max else
+        {
+            throw ParchmentError.maxUInt64ValueNotAllowed
+        }
+
         guard let mapped = self.mapped else
         {
             throw ParchmentError.noMmapFile
@@ -241,7 +275,7 @@ public class ParchmentUnsafe
             throw ParchmentError.noMmapFile
         }
 
-        return try mapped.get(offset: uint64Offset, length: length)
+        return try mapped.get(offset: uint64Offset, length: length).filter { $0 != UInt64.max }
     }
 
     public func get(offset uint64Offset: UInt64) throws -> UInt64
@@ -251,15 +285,49 @@ public class ParchmentUnsafe
             throw ParchmentError.noMmapFile
         }
 
-        return try mapped.get(offset: uint64Offset)
+        let result = try mapped.get(offset: uint64Offset)
+        guard result != UInt64.max else
+        {
+            throw ParchmentError.maxUInt64ValueNotAllowed
+        }
+
+        return result
     }
 
     public func contains(offset uint64Offset: UInt64) -> Bool
     {
         return uint64Offset < UInt64(self.fileSize)
     }
+
+    public func delete(offset uint64Offset: UInt64) throws
+    {
+        guard let mapped = self.mapped else
+        {
+            throw ParchmentError.noMmapFile
+        }
+
+        try mapped.set(offset: uint64Offset, to: UInt64.max)
+    }
+
+    public func delete(offset uint64Offset: UInt64, length: UInt64) throws
+    {
+        guard let mapped = self.mapped else
+        {
+            throw ParchmentError.noMmapFile
+        }
+
+        let values = [UInt64](repeating: UInt64.max, count: Int(length))
+
+        try mapped.set(offset: uint64Offset, to: values)
+    }
+
+    public func compact() throws
+    {
+        // FIXME - implement deleted item compaction
+    }
 }
 
+// ParchmentActor uses actor-based locking and presents an asynchronous API
 public actor ParchmentActor
 {
     static public func create(_ url: URL, value: UInt64) throws -> ParchmentActor
@@ -316,7 +384,7 @@ public actor ParchmentActor
     }
 }
 
-
+// Parchment uses actor-based locking and presents a synchronous API
 public class Parchment
 {
     static public func create(_ url: URL, value: UInt64) throws -> Parchment
@@ -524,4 +592,5 @@ public enum ParchmentError: Error
     case invalidSize(Int)
     case invalidOffset(UInt64)
     case fileExists
+    case maxUInt64ValueNotAllowed
 }

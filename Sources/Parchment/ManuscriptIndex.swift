@@ -5,6 +5,8 @@
 //  Created by Dr. Brandon Wiley on 8/18/22.
 //
 
+// The ManuscriptIndex is an index into a collection of Pages.
+
 import Foundation
 
 public class IndexEntry

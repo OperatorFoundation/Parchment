@@ -37,14 +37,15 @@ public class RecyclingBin
         try self.index.append(page: page)
     }
 
-    public func reuse(page: NewPage) throws -> Page
-    {
-        for (item, entry) in self.sortedArray.enumerated()
-        {
-            if entry.length == page.values.count
-            {
-                
-            }
-        }
-    }
+    // FIXME
+//    public func reuse(page: NewPage) throws -> Page
+//    {
+//        for (item, entry) in self.sortedArray.enumerated()
+//        {
+//            if entry.length == page.values.count
+//            {
+//
+//            }
+//        }
+//    }
 }

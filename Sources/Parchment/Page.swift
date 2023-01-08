@@ -5,6 +5,8 @@
 //  Created by Dr. Brandon Wiley on 8/15/22.
 //
 
+// A Page represents a file mmapped to a [UInt64], either the whole file or any contiguous subset.
+
 import Foundation
 
 public class Page

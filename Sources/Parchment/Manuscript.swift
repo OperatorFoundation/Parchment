@@ -5,6 +5,8 @@
 //  Created by Dr. Brandon Wiley on 8/15/22.
 //
 
+// A Manuscript is a collection of Pages.
+
 import Foundation
 
 import Datable

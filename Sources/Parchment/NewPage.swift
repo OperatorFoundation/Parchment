@@ -5,6 +5,8 @@
 //  Created by Dr. Brandon Wiley on 8/18/22.
 //
 
+// A NewPage represents a Page that has not yet been persisted, in other words a [UInt64].
+
 import Foundation
 
 public class NewPage
