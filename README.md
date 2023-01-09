@@ -1,3 +1,3 @@
 # Parchment
 
-A description of this package.
+Parchment is a simple Swift database for storing arrays of UInt64s
