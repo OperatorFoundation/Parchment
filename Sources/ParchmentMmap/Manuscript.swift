@@ -56,7 +56,7 @@ public class Manuscript
     let index: ManuscriptIndex
     var recycling: RecyclingBin! = nil
     
-    let header: Parchment
+    let header: any Parchment
     var pages = NSMapTable<PageNumber, Page>(keyOptions: .copyIn, valueOptions: .weakMemory)
 
     public init(directory: URL) throws
@@ -76,12 +76,12 @@ public class Manuscript
 
         if File.exists(self.pagesUrl.path)
         {
-            self.header = try Parchment(self.pagesUrl, offsetUInt64: 0, sizeUInt64: 1) // offset and size are in bytes
+            self.header = try ParchmentMmap(self.pagesUrl, offsetUInt64: 0, sizeUInt64: 1) // offset and size are in bytes
         }
         else
         {
             let endianness = UInt64(DatableConfig.localEndianness.rawValue)
-            self.header = try Parchment.create(self.pagesUrl, value: endianness)
+            self.header = try ParchmentMmap.create(self.pagesUrl, value: endianness)
         }
 
         let recyclingUrl = directory.appendingPathComponent("recycling.parchment")

@@ -1,4 +1,4 @@
-// Parchment mmaps a file to a [UInt64]. It can either mmap the whole file or any contiguous subset of the file.
+// ParchmentMmap mmaps a file to a [UInt64]. It can either mmap the whole file or any contiguous subset of the file.
 
 import Foundation
 import SystemPackage
@@ -7,6 +7,9 @@ import Chord
 import Datable
 import Gardener
 import Mmap
+import ParchmentTypes
+
+@_exported import ParchmentTypes
 
 // ParchmetUnsafe does not lock
 public class ParchmentUnsafe
@@ -400,12 +403,12 @@ public actor ParchmentActor
 }
 
 // Parchment uses actor-based locking and presents a synchronous API
-public class Parchment
+public class ParchmentMmap: Parchment
 {
-    static public func create(_ url: URL, value: UInt64) throws -> Parchment
+    static public func create(_ url: URL, value: UInt64) throws -> any Parchment
     {
         let actor = try ParchmentActor.create(url, value: value)
-        return Parchment(actor: actor)
+        return ParchmentMmap(actor: actor)
     }
 
     public var fileSize: Int
@@ -420,7 +423,7 @@ public class Parchment
 
     let actor: ParchmentActor
 
-    public init(_ url: URL, offsetUInt64: UInt64 = 0, sizeUInt64: UInt64? = nil) throws
+    public required init(_ url: URL, offsetUInt64: UInt64 = 0, sizeUInt64: UInt64? = nil) throws
     {
         self.actor = try ParchmentActor(url, offsetUInt64: offsetUInt64, sizeUInt64: sizeUInt64)
     }
@@ -507,7 +510,7 @@ public class Parchment
     }
 }
 
-extension Parchment: Sequence
+extension ParchmentMmap: Sequence
 {
     public typealias Element = UInt64
     public typealias Iterator = ParchmentIterator
@@ -518,7 +521,7 @@ extension Parchment: Sequence
     }
 }
 
-extension Parchment: Collection, MutableCollection
+extension ParchmentMmap: Collection, MutableCollection
 {
     public typealias Index = UInt64
 
@@ -567,7 +570,7 @@ extension Parchment: Collection, MutableCollection
     }
 }
 
-extension Parchment: BidirectionalCollection
+extension ParchmentMmap: BidirectionalCollection
 {
     public func index(before i: UInt64) -> UInt64
     {
@@ -575,7 +578,7 @@ extension Parchment: BidirectionalCollection
     }
 }
 
-extension Parchment: RandomAccessCollection
+extension ParchmentMmap: RandomAccessCollection
 {
 }
 
@@ -597,10 +600,10 @@ public class ParchmentIterator: IteratorProtocol
 {
     public typealias Element = UInt64
 
-    let parchment: Parchment
+    let parchment: any Parchment
     var index: UInt64
 
-    public init(_ parchment: Parchment, _ index: UInt64)
+    public init(_ parchment: any Parchment, _ index: UInt64)
     {
         self.parchment = parchment
         self.index = index

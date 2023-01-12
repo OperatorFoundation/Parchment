@@ -95,11 +95,11 @@ public class IndexIterator: IteratorProtocol
 
 public class ManuscriptIndex
 {
-    let parchment: Parchment
+    let parchment: ParchmentMmap
 
     public init(_ url: URL) throws
     {
-        self.parchment = try Parchment(url)
+        self.parchment = try ParchmentMmap(url)
     }
 
     public func get(number: UInt64) throws -> IndexEntry

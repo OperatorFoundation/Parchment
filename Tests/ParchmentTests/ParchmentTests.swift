@@ -1,7 +1,7 @@
 import XCTest
 import SystemPackage
 
-@testable import Parchment
+@testable import ParchmentMmap
 import Datable
 import Gardener
 import Mmap
@@ -53,7 +53,7 @@ final class ParchmentTests: XCTestCase
             }
         }
 
-        let parchment = try Parchment(url)
+        let parchment = try ParchmentMmap(url)
 
         try parchment.append(1)
         try parchment.append(2)
@@ -78,7 +78,7 @@ final class ParchmentTests: XCTestCase
             }
         }
 
-        let parchment = try Parchment(url)
+        let parchment = try ParchmentMmap(url)
 
         try parchment.append(1)
         try parchment.append(2)
