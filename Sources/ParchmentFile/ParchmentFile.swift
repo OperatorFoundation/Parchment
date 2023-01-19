@@ -134,7 +134,7 @@ public class ParchmentUnsafe
         self.url = url
 
         let offsetBytes = Int(offsetUInt64 * 8)
-        let sizeBytes: Int
+        var sizeBytes: Int
         if let size = sizeUInt64
         {
             sizeBytes = Int(size * 8)
@@ -153,7 +153,8 @@ public class ParchmentUnsafe
             {
                 self.file = try FileDescriptor.open(url.path, FileDescriptor.AccessMode.readWrite, options: [.create, .append], permissions: [.ownerReadWrite])
                 self.offset = offsetBytes
-                self.size = sizeBytes
+                sizeBytes = try File.size(self.url)
+                self.size = sizeBytes / 8
                 self.start = offsetBytes
                 self.end = offsetBytes + sizeBytes
                 try self.file.seek(offset: Int64(self.start), from: .start)
