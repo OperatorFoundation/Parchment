@@ -192,11 +192,6 @@ public class ParchmentUnsafe
             throw ParchmentError.maxUInt64ValueNotAllowed
         }
 
-        guard (self.offset + self.size) == self.fileSize else
-        {
-            throw ParchmentError.cannotAppend
-        }
-
         DatableConfig.endianess = .little
         let data = newElement.data
 
