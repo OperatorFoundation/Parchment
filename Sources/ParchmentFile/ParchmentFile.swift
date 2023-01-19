@@ -89,8 +89,7 @@ public class ParchmentUnsafe
 
         let fd = try FileDescriptor.open(url.path, FileDescriptor.AccessMode.readWrite, options: [.create, .append], permissions: [.ownerReadWrite])
 
-        DatableConfig.endianess = .little
-        let data = value.data
+        let data = value.maybeNetworkData!
 
         try fd.writeAll(data)
         try fd.close()
@@ -192,8 +191,7 @@ public class ParchmentUnsafe
             throw ParchmentError.maxUInt64ValueNotAllowed
         }
 
-        DatableConfig.endianess = .little
-        let data = newElement.data
+        let data = newElement.maybeNetworkData!
 
         try self.file.seek(offset: 0, from: FileDescriptor.SeekOrigin.end)
         try self.file.writeAll(data)
@@ -214,8 +212,6 @@ public class ParchmentUnsafe
         let zero = UInt64(0)
         for _ in 0..<Int(size)
         {
-            DatableConfig.endianess = .little
-
             try self.append(zero)
         }
     }
