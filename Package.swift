@@ -22,7 +22,7 @@ let package = Package(
         .package(url: "https://github.com/OperatorFoundation/Datable", branch: "main"),
         .package(url: "https://github.com/OperatorFoundation/Gardener", branch: "main"),
         .package(url: "https://github.com/OperatorFoundation/ParchmentTypes", branch: "main"),
-        .package(url: "https://github.com/ole/SortedArray.git", from: "0.7.0"),
+        .package(url: "https://github.com/ole/SortedArray", from: "0.7.0"),
         .package(url: "https://github.com/apple/swift-system", from: "1.2.1"),
 
     ],
