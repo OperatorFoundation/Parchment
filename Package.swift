@@ -18,10 +18,10 @@ let package = Package(
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
-        .package(url: "https://github.com/OperatorFoundation/Chord", branch: "0.1.1"),
-        .package(url: "https://github.com/OperatorFoundation/Datable", from: "4.0.0"),
-        .package(url: "https://github.com/OperatorFoundation/Gardener", branch: "release"),
-        .package(url: "https://github.com/OperatorFoundation/ParchmentTypes", branch: "release"),
+        .package(url: "https://github.com/OperatorFoundation/Chord", from: "0.1.4"),
+        .package(url: "https://github.com/OperatorFoundation/Datable", from: "4.0.1"),
+        .package(url: "https://github.com/OperatorFoundation/Gardener", from: "0.1.1"),
+        .package(url: "https://github.com/OperatorFoundation/ParchmentTypes", from: "1.0.0"),
         .package(url: "https://github.com/ole/SortedArray", from: "0.7.0"),
         .package(url: "https://github.com/apple/swift-system", from: "1.2.1"),
 
